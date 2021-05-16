@@ -2,10 +2,9 @@ import json
 import telebot
 from telebot import types
 import uuid
-from YamJam import yamjam
+from boto.s3.connection import S3Connection
 
 # данные телеграма
-from boto.s3.connection import S3Connection
 token = S3Connection(os.environ['api_token'])
 bot = telebot.TeleBot(token)
 
