@@ -5,8 +5,8 @@ import uuid
 from YamJam import yamjam
 
 # данные телеграма
-config = yamjam()['ez_money']
-token = config['api_token']
+from boto.s3.connection import S3Connection
+token = S3Connection(os.environ['api_token'])
 bot = telebot.TeleBot(token)
 
 @bot.message_handler(commands=['start'])
