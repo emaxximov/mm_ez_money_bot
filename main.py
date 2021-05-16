@@ -2,13 +2,11 @@ import json
 import telebot
 from telebot import types
 import uuid
-from boto.s3.connection import S3Connection
-import os
 
 # данные телеграма
-token = S3Connection(os.environ['api_token'])
-# with open('config.json', 'r') as config_file:
-#   config = json.load(config_file)
+with open('config.json', 'r') as config_file:
+    config = json.load(config_file)
+token = config['api_token']
 bot = telebot.TeleBot(token)
 
 @bot.message_handler(commands=['start'])
