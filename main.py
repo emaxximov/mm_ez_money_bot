@@ -53,7 +53,7 @@ def ans(message):
         bot.send_message(message.chat.id, 'Пора делать выбор', reply_markup=keyboards.keyboard_main_menu)
 
 def process_add_achievement(message,path):
-    path.append(int(message.text))
+    path.append(message.text)
     keyboard = keyboards.get_keyboard(path)
     if keyboard != None:
         msg = bot.send_message(message.chat.id, 'Выбор', reply_markup=keyboards.get_keyboard(path))
