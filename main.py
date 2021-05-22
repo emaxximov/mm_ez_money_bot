@@ -53,9 +53,13 @@ def ans(message):
         bot.send_message(message.chat.id, 'Пора делать выбор', reply_markup=keyboards.keyboard_main_menu)
 
 def process_add_achievement(message,path):
+    if message.text == 'Главное меню':
+        bot.send_message(message.chat.id, 'Пора делать выбор', reply_markup=keyboards.keyboard_main_menu)
+        return 0
     path.append(message.text)
     keyboard = keyboards.get_keyboard(path)
     if keyboard != None:
+        keyboard.add(keyboards.back_button)
         msg = bot.send_message(message.chat.id, 'Выбор', reply_markup=keyboards.get_keyboard(path))
         bot.register_next_step_handler(msg, lambda l: process_add_achievement(l, path))
     else:
@@ -74,6 +78,9 @@ def add_achievement(message,path):
         bot.register_next_step_handler(msg, lambda l: add_achievement(l, path))
 
 def process_edit_achievement_request(message):
+    if message.text == 'Главное меню':
+        bot.send_message(message.chat.id, 'Пора делать выбор', reply_markup=keyboards.keyboard_main_menu)
+        return 0
     if message.text == 'Удалить все':
         edit_all_achievements(message)
     elif message.text == 'Удалить достижение':
@@ -102,7 +109,6 @@ def edit_one_achievement(message):
         bot.register_next_step_handler(msg, edit_one_achievement)
 
 def edit_all_achievements(message):
-    print('ya tut')
     p = db[message.chat.id]
     p.delete_all()
     db[message.chat.id] = p
