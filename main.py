@@ -57,14 +57,18 @@ def process_add_achievement(message,path):
         bot.send_message(message.chat.id, 'Пора делать выбор', reply_markup=keyboards.keyboard_main_menu)
         return 0
     path.append(message.text)
-    keyboard = keyboards.get_keyboard(path)
-    if keyboard != None:
-        keyboard.add(keyboards.back_button)
-        msg = bot.send_message(message.chat.id, 'Выбор', reply_markup=keyboards.get_keyboard(path))
-        bot.register_next_step_handler(msg, lambda l: process_add_achievement(l, path))
-    else:
-        msg = bot.send_message(message.chat.id, 'Имя достижения')
-        bot.register_next_step_handler(message, lambda l: add_achievement(l, path))
+    try:
+        keyboard = keyboards.get_keyboard(path)
+        if keyboard != None:
+            keyboard.add(keyboards.back_button)
+            msg = bot.send_message(message.chat.id, 'Выбор', reply_markup=keyboards.get_keyboard(path))
+            bot.register_next_step_handler(msg, lambda l: process_add_achievement(l, path))
+        else:
+            msg = bot.send_message(message.chat.id, 'Имя достижения')
+            bot.register_next_step_handler(message, lambda l: add_achievement(l, path))
+    except:
+        bot.send_message(message.chat.id, 'Не шарю')
+        bot.send_message(message.chat.id, 'Пора делать выбор', reply_markup=keyboards.keyboard_main_menu)
 
 def add_achievement(message,path):
     p = db[message.chat.id]
@@ -93,7 +97,8 @@ def process_edit_achievement_request(message):
             bot.send_message(message.chat.id, 'Пусто')
             bot.send_message(message.chat.id, 'Пора делать выбор', reply_markup=keyboards.keyboard_main_menu)
     else:
-        raise NotImplementedError
+        bot.send_message(message.chat.id, 'Не шарю')
+        bot.send_message(message.chat.id, 'Пора делать выбор', reply_markup=keyboards.keyboard_main_menu)
 
 def edit_one_achievement(message):
     name = message.text
