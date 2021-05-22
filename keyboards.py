@@ -16,18 +16,18 @@ button_type2 = types.KeyboardButton(text='Научно-исследовател�
 button_type3 = types.KeyboardButton(text='Общественная деятельность')
 button_type4 = types.KeyboardButton(text='Культурно-творческая деятельность')
 button_type5 = types.KeyboardButton(text='Спортивная деятельность')
-keyboard_types = types.ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)
+keyboard_types = types.ReplyKeyboardMarkup(row_width=1, resize_keyboard=True, one_time_keyboard=True)
 keyboard_types.add(button_type1,button_type2,button_type3,button_type4,button_type5,back_button)
 
 button_edit_one = types.KeyboardButton(text='Удалить достижение')
 button_edit_all = types.KeyboardButton(text='Удалить все')
-keyboard_edit = types.ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)
+keyboard_edit = types.ReplyKeyboardMarkup(row_width=1, resize_keyboard=True, one_time_keyboard=True)
 keyboard_edit.add(button_edit_one,button_edit_all,back_button)
 
 def get_keyboard(path):
     # print(path)
     names = scores
-    keyboard = types.ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)
+    keyboard = types.ReplyKeyboardMarkup(row_width=1, resize_keyboard=True,one_time_keyboard=True)
     for i in path:
         names = names[i]
         if type(names) == list:
