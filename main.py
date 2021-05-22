@@ -31,28 +31,82 @@ def ans(message):
         bot.send_message(message.chat.id, 'Пора делать выбор', reply_markup=keyboards.keyboard_main_menu)
     elif message.text == 'Добавить достижение':
         msg = bot.send_message(message.chat.id, 'Тип достижения', reply_markup=keyboards.keyboard_types)
-        bot.register_next_step_handler(msg, type_achievement)
+        bot.register_next_step_handler(msg, lambda l: process_add_achievement(l, []))
     elif message.text == 'Редактировать достижения':
+        msg = bot.send_message(message.chat.id, 'Выбор', reply_markup=keyboards.keyboard_edit)
+        bot.register_next_step_handler(msg, process_edit_achievement_request)
+    elif message.text == 'Расшифровка аббревиатур':
+        s = ''
+        for i in match.acronyms:
+            s += '{} {}\n'.format(i,match.acronyms[i])
+        bot.send_message(message.chat.id, s)
+        bot.send_message(message.chat.id, 'Пора делать выбор', reply_markup=keyboards.keyboard_main_menu)
+    elif message.text == 'Список достижений':
+        s = p.get_list()
+        if s != '':
+            bot.send_message(message.chat.id, s)
+        else:
+            bot.send_message(message.chat.id, 'Пусто')
+        bot.send_message(message.chat.id, 'Пора делать выбор', reply_markup=keyboards.keyboard_main_menu)
+    else:
+        bot.send_message(message.chat.id, 'Не шарю')
         bot.send_message(message.chat.id, 'Пора делать выбор', reply_markup=keyboards.keyboard_main_menu)
 
-def type_achievement(message):
-    if message.text == 'Учебная деятельность':
-        msg = bot.send_message(message.chat.id, 'Критерий', reply_markup=keyboards.keyboard_7)
-        bot.register_next_step_handler(msg, type_achievement_local)
-
-def type_achievement_local(message):
-    if message.text == 'Только "отлично"':
+def process_add_achievement(message,path):
+    path.append(int(message.text))
+    keyboard = keyboards.get_keyboard(path)
+    if keyboard != None:
+        msg = bot.send_message(message.chat.id, 'Выбор', reply_markup=keyboards.get_keyboard(path))
+        bot.register_next_step_handler(msg, lambda l: process_add_achievement(l, path))
+    else:
         msg = bot.send_message(message.chat.id, 'Имя достижения')
-        bot.register_next_step_handler(msg, lambda l: add_achievements(l, 8))
-    # elif message.type == 'Олимпиада':
-    #     msg = bot.send_message(message.chat.id, 'Пора делать выбор', reply_markup=keyboards.keyboard_7)
-        # bot.register_next_step_handler(msg, type_achievement_local)
+        bot.register_next_step_handler(message, lambda l: add_achievement(l, path))
 
-def add_achievements(message,score):
+def add_achievement(message,path):
     p = db[message.chat.id]
-    p.add(message.text,score)
+    resp = p.add(message.text,path)
+    if resp:
+        db[message.chat.id] = p
+        bot.send_message(message.chat.id, 'Добавлено')
+        bot.send_message(message.chat.id, 'Пора делать выбор', reply_markup=keyboards.keyboard_main_menu)
+    else:
+        msg = bot.send_message(message.chat.id, 'Имя занято, введите уникальное имя')
+        bot.register_next_step_handler(msg, lambda l: add_achievement(l, path))
+
+def process_edit_achievement_request(message):
+    if message.text == 'Удалить все':
+        edit_all_achievements(message)
+    elif message.text == 'Удалить достижение':
+        p = db[message.chat.id]
+        s = p.get_list()
+        if s != '':
+            msg = bot.send_message(message.chat.id, s)
+            bot.register_next_step_handler(msg, edit_one_achievement)
+        else:
+            bot.send_message(message.chat.id, 'Пусто')
+            bot.send_message(message.chat.id, 'Пора делать выбор', reply_markup=keyboards.keyboard_main_menu)
+    else:
+        raise NotImplementedError
+
+def edit_one_achievement(message):
+    name = message.text
+    p = db[message.chat.id]
+    resp = p.delete(name)
+    if resp:
+        db[message.chat.id] = p
+        bot.send_message(message.chat.id, 'Удалено')
+        bot.send_message(message.chat.id, 'Пора делать выбор', reply_markup=keyboards.keyboard_main_menu)
+    else:
+        bot.send_message(message.chat.id, 'Некорректное имя, введите корректное')
+        msg = bot.send_message(message.chat.id, p.get_list())
+        bot.register_next_step_handler(msg, edit_one_achievement)
+
+def edit_all_achievements(message):
+    print('ya tut')
+    p = db[message.chat.id]
+    p.delete_all()
     db[message.chat.id] = p
-    bot.send_message(message.chat.id, 'Добавлено')
+    bot.send_message(message.chat.id, 'Все достижения удалены')
     bot.send_message(message.chat.id, 'Пора делать выбор', reply_markup=keyboards.keyboard_main_menu)
 
 if __name__ == '__main__':
