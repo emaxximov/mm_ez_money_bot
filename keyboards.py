@@ -9,8 +9,8 @@ button_acronyms = types.KeyboardButton(text='Расшифровка аббрев
 keyboard_main_menu = types.ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)
 keyboard_main_menu.add(button_add,button_edit,button_list,button_total,button_acronyms)
 
-button_type1 = types.KeyboardButton(text='1')
-button_type2 = types.KeyboardButton(text='2')
+button_type1 = types.KeyboardButton(text='Учебная деятельность')
+button_type2 = types.KeyboardButton(text='Научно-исследовательская деятельность')
 button_type3 = types.KeyboardButton(text='Общественная деятельность')
 button_type4 = types.KeyboardButton(text='Культурно-творческая деятельность')
 button_type5 = types.KeyboardButton(text='Спортивная деятельность')
